@@ -10,6 +10,7 @@ import sys
 import re
 from enum import Enum
 from copy import deepcopy
+import json
 
 import yaml
 from typing import Any, List, Dict, Optional, Union
@@ -529,10 +530,20 @@ class Config:
 
         if is_number(cpt_id, int):
             return os.path.join(self.folder, "checkpoint_{:05d}.pt".format(int(cpt_id)))
-        elif cpt_id == "hyperparams":
-            return os.path.join(self.folder, "hyperparams.json")
         else:
             return os.path.join(self.folder, "checkpoint_{}.pt".format(cpt_id))
+    
+    def hyperparams_save(self, cpt_id: Union[str, int]) -> str:
+        "Save the hyperparameter file for a given checkpoint id"
+        from kge.misc import is_number
+
+        if is_number(cpt_id, int):
+            hyperparam_file = os.path.join(self.folder, "checkpoint_{:05d}.json".format(int(cpt_id)))
+        else:
+            hyperparam_file = os.path.join(self.folder, "checkpoint_{}.json".format(cpt_id))
+        with open(hyperparam_file, "w") as f:
+            json.dump(self.options, f, indent=4)
+        return hyperparam_file
 
     def last_checkpoint_number(self) -> Optional[int]:
         "Return number (epoch) of latest checkpoint"
