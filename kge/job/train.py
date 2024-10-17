@@ -3,6 +3,7 @@ import os
 import math
 import time
 import traceback
+import json
 from collections import defaultdict
 
 from dataclasses import dataclass
@@ -163,6 +164,12 @@ class TrainingJob(TrainingOrEvaluationJob):
                 )
                 if best_index == len(self.valid_trace) - 1:
                     self.save(self.config.checkpoint_file("best"))
+                    best_hyperparams = self.config.options
+                    hyperparam_file = self.config.checkpoint_file("hyperparams")
+                    with open(hyperparam_file, "w") as f:
+                        json.dump(best_hyperparams, f, indent=4)
+                    self.config.log(f"Best epoch hyperparameters saved to {hyperparam_file}")
+
                 if (
                     patience > 0
                     and len(self.valid_trace) > patience

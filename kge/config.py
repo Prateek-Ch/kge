@@ -529,6 +529,8 @@ class Config:
 
         if is_number(cpt_id, int):
             return os.path.join(self.folder, "checkpoint_{:05d}.pt".format(int(cpt_id)))
+        elif cpt_id == "hyperparams":
+            return os.path.join(self.folder, "hyperparams.json")
         else:
             return os.path.join(self.folder, "checkpoint_{}.pt".format(cpt_id))
 
