@@ -163,6 +163,11 @@ class TrainingJob(TrainingOrEvaluationJob):
                 )
                 if best_index == len(self.valid_trace) - 1:
                     self.save(self.config.checkpoint_file("best"))
+                    hyperparameter_save = self.config.get("user.hyperparameter_save")
+                    if hyperparameter_save:
+                        hyperparam_file = self.config.hyperparams_save("best")
+                        self.config.log(f"Best epoch hyperparameters saved to {hyperparam_file}")
+
                 if (
                     patience > 0
                     and len(self.valid_trace) > patience
