@@ -17,12 +17,6 @@ for triple in test_triples:
 def evaluate_group(model, triples):
     # Convert the list of triples to a tensor
     triples_tensor = torch.stack(triples).to(model.config.get("job.device"))
-    # Evaluate using the model's scoring function
-    # results = model.score_sp_po(triples_tensor[:, 0], triples_tensor[:, 1], triples_tensor[:, 2])
-    # return results
-
-    
-
 
     eval_job = EvaluationJob.create(model.config, dataset=model.dataset, model=model)
     # Prepare and run the evaluation
@@ -33,7 +27,7 @@ def evaluate_group(model, triples):
         collate_fn=eval_job._collate,
     )
     eval_job.loader = custom_loader
-    eval_job.result = eval_job._run()  # Run the evaluation on this subgroup
+    eval_job.result = eval_job._run()
     
     # Return the evaluation results (including MRR, Hits@k)
     return eval_job.result
@@ -41,4 +35,3 @@ def evaluate_group(model, triples):
 for relation, triples in relation_groups.items():
     print(f"Evaluating relation: {relation}")
     results = evaluate_group(model, relation_groups[relation])
-    print(f"Results for relation {relation}: {results}")
