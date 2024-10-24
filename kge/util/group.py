@@ -9,12 +9,21 @@ model = KgeModel.create_from(checkpoint)
 test_triples  = model.dataset.split("test")
 
 relation_groups = defaultdict(list)
+subject_groups = defaultdict(list)
+predicate_groups = defaultdict(list)
+
 
 for triple in test_triples:
+    subject = triple[0].item()
     relation = triple[1].item()
-    relation_groups[relation].append(triple)
+    predicate = triple[2].item()
 
-def evaluate_group(model, triples):
+    subject_groups[subject].append(triple)
+    relation_groups[relation].append(triple)
+    predicate_groups[predicate].append(triple)
+
+
+def evaluate(model, triples):
     # Convert the list of triples to a tensor
     triples_tensor = torch.stack(triples).to(model.config.get("job.device"))
 
@@ -32,6 +41,9 @@ def evaluate_group(model, triples):
     # Return the evaluation results (including MRR, Hits@k)
     return eval_job.result
 
-for relation, triples in relation_groups.items():
-    print(f"Evaluating relation: {relation}")
-    results = evaluate_group(model, relation_groups[relation])
+def eval_subgroup(sub):
+    for key, triples in sub.items():
+        print(f"Evaluating relation: {key}")
+        results = evaluate(model, sub[key])
+
+eval_subgroup(relation_groups)
