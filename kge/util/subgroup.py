@@ -45,5 +45,6 @@ def eval_subgroup(sub):
     for key, triples in sub.items():
         print(f"Evaluating relation: {key}")
         results = evaluate(model, sub[key])
+        print(results)
 
 eval_subgroup(relation_groups)
