@@ -700,3 +700,8 @@ grash_search:
 # add additional configuration options or information to this config.
 user:
   +++: +++
+
+  # Enables saving the hyperparameters as json files
+  # Currently for the best epoch's hyperparamaters.
+  hyperparameter_save: True
+
