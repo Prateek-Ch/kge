@@ -13,7 +13,7 @@ class SubgroupEvaluator:
         self.group_type = group_type
         self.test_triples = self.model.dataset.split("test")
         self.results_df = pd.DataFrame(
-            columns=["Relation Strings", "Relation ID", "MR", "MRR", "Hits@1", "Hits@3", "Hits@10"]
+            columns=["Relation Strings", "Triple Count", "Relation ID", "MR", "MRR", "Hits@1", "Hits@3", "Hits@10"]
         )
 
     def group_triples(self):
@@ -68,10 +68,12 @@ class SubgroupEvaluator:
             hits_at_1 = results["hits_at_1"]
             hits_at_3 = results["hits_at_3"]
             hits_at_10 = results["hits_at_100"]
+            triple_count = len(triples)
 
             # Append results to DataFrame
             self.results_df = self.results_df._append({
                 "Relation Strings": name if name else "",
+                "Triple Count": triple_count,
                 "Relation ID": key,
                 "MR": mr,
                 "MRR": mrr,
