@@ -16,6 +16,10 @@ class SubgroupEvaluator:
             columns=["Relation Strings", "Triple Count", "Relation ID", "MR", "MRR", "Hits@1", "Hits@3", "Hits@10"]
         )
 
+        self.filtered_results_df = pd.DataFrame(
+            columns=["Relation Strings", "Triple Count", "Relation ID", "Filtered MR", "Filtered MRR", "Filtered Hits@1", "Filtered Hits@3", "Filtered Hits@10"]
+        )
+
     def group_triples(self):
         """Groups triples in the test set by the specified type (subject, relation, or object)."""
         groups = defaultdict(list)
@@ -69,6 +73,11 @@ class SubgroupEvaluator:
             hits_at_3 = results["hits_at_3"]
             hits_at_10 = results["hits_at_100"]
             triple_count = len(triples)
+            filtered_mr = results["mean_rank_filtered"]
+            filtered_mrr = results["mean_reciprocal_rank_filtered"]
+            filtered_hits_at_1 = results["hits_at_1_filtered"]
+            filtered_hits_at_3 = results["hits_at_3_filtered"]
+            filtered_hits_at_10 = results["hits_at_100_filtered"]
 
             # Append results to DataFrame
             self.results_df = self.results_df._append({
@@ -82,8 +91,21 @@ class SubgroupEvaluator:
                 "Hits@10": hits_at_10,
             }, ignore_index=True)
 
+            self.filtered_results_df = self.filtered_results_df._append({
+                "Relation Strings": name if name else "",
+                "Triple Count": triple_count,
+                "Relation ID": key,
+                "Filtered MR": filtered_mr,
+                "Filtered MRR": filtered_mrr,
+                "Filtered Hits@1": filtered_hits_at_1,
+                "Filtered Hits@3": filtered_hits_at_3,
+                "Filtered Hits@10": filtered_hits_at_10,
+            }, ignore_index=True)
+
         print("Evaluation results:")
         print(self.results_df)
+        print("\n Filtered Evaluation results:")
+        print(self.filtered_results_df)
 
 # Usage example
 evaluator = SubgroupEvaluator(
