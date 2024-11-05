@@ -109,8 +109,9 @@ class SubgroupEvaluator:
         print("\n Filtered Evaluation results:")
         print(self.filtered_results_df)
 
-evaluator = SubgroupEvaluator(
-    checkpoint_path='local/experiments/20241021-193745-wnrr-rescal/checkpoint_best.pt',
-    group_type="relation"  # Change to "subject" or "object" as needed
-)
-evaluator.eval_subgroups()
+if __name__ == "__main__":
+    evaluator = SubgroupEvaluator(
+        checkpoint_path='local/experiments/20241021-193745-wnrr-rescal/checkpoint_best.pt',
+        group_type="relation"  # Change to "subject" or "object" as needed
+    )
+    evaluator.eval_subgroups()
