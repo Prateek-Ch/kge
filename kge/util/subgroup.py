@@ -22,6 +22,7 @@ class SubgroupEvaluator:
 
     def group_triples(self):
         """Groups triples in the test set by the specified type (subject, relation, or object)."""
+
         groups = defaultdict(list)
         for triple in self.test_triples:
             if self.group_type == "subject":
@@ -37,6 +38,7 @@ class SubgroupEvaluator:
 
     def evaluate(self, triples):
         """Evaluates a batch of triples and returns results such as MRR and Hits@k."""
+        
         triples_tensor = torch.stack(triples).to(self.model.config.get("job.device"))
 
         eval_job = EvaluationJob.create(self.model.config, dataset=self.model.dataset, model=self.model)
@@ -107,7 +109,6 @@ class SubgroupEvaluator:
         print("\n Filtered Evaluation results:")
         print(self.filtered_results_df)
 
-# Usage example
 evaluator = SubgroupEvaluator(
     checkpoint_path='local/experiments/20241021-193745-wnrr-rescal/checkpoint_best.pt',
     group_type="relation"  # Change to "subject" or "object" as needed
