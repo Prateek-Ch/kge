@@ -59,12 +59,10 @@ class CustomDistribution:
                 "Test Triple Distribution": test_count / test_total
             })
 
-        # Use pd.concat for efficient row additions
         self.current_relation_count_df = pd.concat([self.current_relation_count_df, pd.DataFrame(rows_count)], ignore_index=True)
         self.current_relation_distribution_df = pd.concat([self.current_relation_distribution_df, pd.DataFrame(rows_distribution)], ignore_index=True)
 
     def current_distribution(self):
-        
         relation_counts = self._count_triples_per_relation()
         self._create_dataframes(relation_counts)
 
