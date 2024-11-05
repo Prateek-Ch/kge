@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 from collections import defaultdict
 from kge.model import KgeModel
 from kge.util.io import load_checkpoint
@@ -71,6 +72,47 @@ class CustomDistribution:
         print("\nCurrent Triple Distribution:")
         print(self.current_relation_distribution_df)
 
+    def plot_relation_distribution(self):
+        # Plotting the relation distribution for Train, Valid, and Test
+        fig, ax = plt.subplots(1, 3, figsize=(18, 6))
+        fig.suptitle("Relation Distribution by Split")
+
+        # Extract data for plotting
+        train_counts = self.current_relation_count_df[['Relation ID', 'Train Triple Count']]
+        valid_counts = self.current_relation_count_df[['Relation ID', 'Valid Triple Count']]
+        test_counts = self.current_relation_count_df[['Relation ID', 'Test Triple Count']]
+        
+        # Sort by Relation ID for consistency
+        train_counts = train_counts.sort_values(by="Relation ID")
+        valid_counts = valid_counts.sort_values(by="Relation ID")
+        test_counts = test_counts.sort_values(by="Relation ID")
+        
+        # Get max counts for custom scaling
+        max_train = train_counts["Train Triple Count"].max()
+        max_valid = valid_counts["Valid Triple Count"].max()
+        max_test = test_counts["Test Triple Count"].max()
+
+        # Bar plot for training data
+        ax[0].bar(train_counts["Relation ID"], train_counts["Train Triple Count"], color="skyblue")
+        ax[0].set_title("Training Set")
+        ax[0].set_xlabel("Relation ID")
+        ax[0].set_ylabel("Triple Count")
+
+        # Bar plot for validation data
+        ax[1].bar(valid_counts["Relation ID"], valid_counts["Valid Triple Count"], color="lightgreen")
+        ax[1].set_title("Validation Set")
+        ax[1].set_xlabel("Relation ID")
+        
+        # Bar plot for test data
+        ax[2].bar(test_counts["Relation ID"], test_counts["Test Triple Count"], color="salmon")
+        ax[2].set_title("Test Set")
+        ax[2].set_xlabel("Relation ID")
+
+        plt.tight_layout()
+        plt.show()
+
+
 if __name__ == "__main__":
     custom_distribution = CustomDistribution()
     custom_distribution.current_distribution()
+    # custom_distribution.plot_relation_distribution()
