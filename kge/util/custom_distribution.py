@@ -1,65 +1,77 @@
 import pandas as pd
-
 from collections import defaultdict
 from kge.model import KgeModel
 from kge.util.io import load_checkpoint
 
 class CustomDistribution:
-    def __init__(self):
-        self.checkpoint_path = 'local/experiments/20241021-193745-wnrr-rescal/checkpoint_best.pt'
+    COLUMNS_COUNT = ["Relation ID", "Relation Strings", "Train Triple Count", "Valid Triple Count", "Test Triple Count"]
+    COLUMNS_DISTRIBUTION = ["Relation ID", "Relation Strings", "Train Triple Distribution", "Valid Triple Distribution", "Test Triple Distribution"]
+
+    def __init__(self, checkpoint_path: str = 'local/experiments/20241021-193745-wnrr-rescal/checkpoint_best.pt'):
+        self.checkpoint_path = checkpoint_path
         self.checkpoint = load_checkpoint(self.checkpoint_path)
         self.model = KgeModel.create_from(self.checkpoint)
-        self.current_relation_count_df = pd.DataFrame(
-            columns=["Relation ID", "Relation Strings", "Train Triple Count", "Valid Triple Count"
-                     , "Test Triple Count"])
+        self.current_relation_count_df = pd.DataFrame(columns=self.COLUMNS_COUNT)
+        self.current_relation_distribution_df = pd.DataFrame(columns=self.COLUMNS_DISTRIBUTION)
+
+    def _count_triples_per_relation(self) -> dict:
+        """Counts triples per relation in train, test, and validation splits."""
+        relation_counts = {"train": defaultdict(int), "test": defaultdict(int), "valid": defaultdict(int)}
         
-        self.current_relation_distribution_df = pd.DataFrame(
-            columns=["Relation ID", "Relation Strings", "Train Triple Distribution", "Valid Triple Distribution"
-                     , "Test Triple Distribution"])
-    
+        for split in relation_counts:
+            triples = self.model.dataset.split(split)
+            relation_counts[split]["total_count"] = len(triples)
+            for triple in triples:
+                relation_id = triple[1].item()
+                relation_counts[split][relation_id] += 1
+
+        return relation_counts
+
+    def _create_dataframes(self, relation_counts: dict):
+        """Populates DataFrames for counts and distributions based on relation counts."""
+        rows_count = []
+        rows_distribution = []
+        
+        for relation_id in relation_counts["train"]:
+            if relation_id == "total_count":
+                continue
+
+            relation_name = self.model.dataset.relation_strings(relation_id)
+            train_count = relation_counts["train"][relation_id]
+            valid_count = relation_counts["valid"][relation_id]
+            test_count = relation_counts["test"][relation_id]
+            train_total = relation_counts["train"]["total_count"] or 1  # Avoid division by zero
+            valid_total = relation_counts["valid"]["total_count"] or 1
+            test_total = relation_counts["test"]["total_count"] or 1
+            
+            rows_count.append({
+                "Relation ID": relation_id,
+                "Relation Strings": relation_name if relation_name else "",
+                "Train Triple Count": train_count,
+                "Valid Triple Count": valid_count,
+                "Test Triple Count": test_count
+            })
+            rows_distribution.append({
+                "Relation ID": relation_id,
+                "Relation Strings": relation_name if relation_name else "",
+                "Train Triple Distribution": train_count / train_total,
+                "Valid Triple Distribution": valid_count / valid_total,
+                "Test Triple Distribution": test_count / test_total
+            })
+
+        # Use pd.concat for efficient row additions
+        self.current_relation_count_df = pd.concat([self.current_relation_count_df, pd.DataFrame(rows_count)], ignore_index=True)
+        self.current_relation_distribution_df = pd.concat([self.current_relation_distribution_df, pd.DataFrame(rows_distribution)], ignore_index=True)
+
     def current_distribution(self):
-        # Dictionary to store relation counts for each split
-        relation_counts = {
-            "train": defaultdict(int),
-            "test": defaultdict(int),
-            "valid": defaultdict(int)
-        }
         
-        for key in relation_counts.keys():
-            key_split = self.model.dataset.split(key)
-            relation_counts[key]["total_count"] = len(key_split)
-            for triple in key_split:
-                relation = triple[1].item()
-                relation_counts[key][relation] += 1
-        
-        all_relation_ids = relation_counts["train"].keys()
-        for relation_id in all_relation_ids:
-            if relation_id != 'total_count':
-                relation_name = self.model.dataset.relation_strings(relation_id)
-                self.current_relation_count_df = self.current_relation_count_df._append({
-                    "Relation ID": relation_id,
-                    "Relation Strings": relation_name if relation_name else "",
-                    "Train Triple Count": relation_counts["train"][relation_id],
-                    "Valid Triple Count": relation_counts["valid"][relation_id],
-                    "Test Triple Count": relation_counts["test"][relation_id]
-                }, ignore_index = True)
+        relation_counts = self._count_triples_per_relation()
+        self._create_dataframes(relation_counts)
 
-                self.current_relation_distribution_df = self.current_relation_distribution_df._append({
-                    "Relation ID": relation_id,
-                    "Relation Strings": relation_name if relation_name else "",
-                    "Train Triple Distribution": relation_counts["train"][relation_id] / relation_counts["train"]["total_count"],
-                    "Valid Triple Distribution": relation_counts["valid"][relation_id] / relation_counts["valid"]["total_count"],
-                    "Test Triple Distribution": relation_counts["test"][relation_id] / relation_counts["test"]["total_count"]
-                }, ignore_index = True)
-
-        print("\n Current Triple Count: ")
+        print("\nCurrent Triple Count:")
         print(self.current_relation_count_df)
-
-        print("\n Current Triple Distribution: ")
+        print("\nCurrent Triple Distribution:")
         print(self.current_relation_distribution_df)
-
-
-
 
 if __name__ == "__main__":
     custom_distribution = CustomDistribution()
