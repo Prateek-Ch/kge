@@ -12,19 +12,19 @@ class SubgroupEvaluator:
         self.model = KgeModel.create_from(self.checkpoint)
         self.group_type = group_type
         self.test_triples = self.model.dataset.split("test")
+        self.train_triples = self.model.dataset.split("train")
         self.results_df = pd.DataFrame(
-            columns=["Relation Strings", "Triple Count", "Relation ID", "MR", "MRR", "Hits@1", "Hits@3", "Hits@10"]
+            columns=["Relation Strings", "Test Triple Count", "Train Triple Count", "Relation ID", "MR", "MRR", "Hits@1", "Hits@3", "Hits@10"]
         )
 
         self.filtered_results_df = pd.DataFrame(
-            columns=["Relation Strings", "Triple Count", "Relation ID", "Filtered MR", "Filtered MRR", "Filtered Hits@1", "Filtered Hits@3", "Filtered Hits@10"]
+            columns=["Relation Strings", "Test Triple Count", "Train Triple Count", "Relation ID", "Filtered MR", "Filtered MRR", "Filtered Hits@1", "Filtered Hits@3", "Filtered Hits@10"]
         )
 
-    def group_triples(self):
-        """Groups triples in the test set by the specified type (subject, relation, or object)."""
-
+    def group_triples(self, triples):
+        """Groups triples by the specified type (subject, relation, or object)."""
         groups = defaultdict(list)
-        for triple in self.test_triples:
+        for triple in triples:
             if self.group_type == "subject":
                 key = triple[0].item()
             elif self.group_type == "relation":
@@ -35,6 +35,12 @@ class SubgroupEvaluator:
                 raise ValueError("Invalid group_type. Choose from 'subject', 'relation', or 'object'.")
             groups[key].append(triple)
         return groups
+
+    def get_train_counts(self):
+        """Counts training triples for each subgroup and returns a dictionary."""
+        train_groups = self.group_triples(self.train_triples)
+        train_counts = {key: len(triples) for key, triples in train_groups.items()}
+        return train_counts
 
     def evaluate(self, triples):
         """Evaluates a batch of triples and returns results such as MRR and Hits@k."""
@@ -54,12 +60,13 @@ class SubgroupEvaluator:
         return eval_job.result
 
     def eval_subgroups(self):
-        """Evaluates and prints results for each subgroup based on the grouping type."""
+        """Evaluates and prints results for each subgroup based on the grouping type."""  
 
-        groups = self.group_triples()
-        for key, triples in groups.items():
+        test_groups = self.group_triples(self.test_triples)
+        train_counts = self.get_train_counts()
+
+        for key, triples in test_groups.items():
             # Retrieve the relation name for the relation ID if group_type is relation
-            name = None
             if self.group_type == "relation":
                 name = self.model.dataset.relation_strings(key)
             else:
@@ -73,18 +80,20 @@ class SubgroupEvaluator:
             mrr = results["mean_reciprocal_rank"]  # Mean Reciprocal Rank
             hits_at_1 = results["hits_at_1"]
             hits_at_3 = results["hits_at_3"]
-            hits_at_10 = results["hits_at_100"]
+            hits_at_10 = results["hits_at_10"]
             triple_count = len(triples)
+            train_triple_count = train_counts.get(key, 0)
             filtered_mr = results["mean_rank_filtered"]
             filtered_mrr = results["mean_reciprocal_rank_filtered"]
             filtered_hits_at_1 = results["hits_at_1_filtered"]
             filtered_hits_at_3 = results["hits_at_3_filtered"]
-            filtered_hits_at_10 = results["hits_at_100_filtered"]
+            filtered_hits_at_10 = results["hits_at_10_filtered"]
 
             # Append results to DataFrame
             self.results_df = self.results_df._append({
                 "Relation Strings": name if name else "",
-                "Triple Count": triple_count,
+                "Test Triple Count": triple_count,
+                "Train Triple Count": train_triple_count,
                 "Relation ID": key,
                 "MR": mr,
                 "MRR": mrr,
@@ -95,7 +104,8 @@ class SubgroupEvaluator:
 
             self.filtered_results_df = self.filtered_results_df._append({
                 "Relation Strings": name if name else "",
-                "Triple Count": triple_count,
+                "Test Triple Count": triple_count,
+                "Train Triple Count": train_triple_count,
                 "Relation ID": key,
                 "Filtered MR": filtered_mr,
                 "Filtered MRR": filtered_mrr,
