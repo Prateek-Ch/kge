@@ -94,25 +94,30 @@ class CustomDistribution:
 
         # Bar plot for training data
         ax[0].bar(train_counts["Relation ID"], train_counts["Train Triple Count"], color="skyblue")
+        ax[0].set_ylim(0, max_train * 1.1)
         ax[0].set_title("Training Set")
         ax[0].set_xlabel("Relation ID")
         ax[0].set_ylabel("Triple Count")
-
+        ax[0].tick_params(axis='x', rotation=45)
         # Bar plot for validation data
         ax[1].bar(valid_counts["Relation ID"], valid_counts["Valid Triple Count"], color="lightgreen")
+        ax[1].set_ylim(0, max_valid * 1.1)
         ax[1].set_title("Validation Set")
         ax[1].set_xlabel("Relation ID")
         
         # Bar plot for test data
         ax[2].bar(test_counts["Relation ID"], test_counts["Test Triple Count"], color="salmon")
+        ax[2].set_ylim(0, max_test * 1.1)
         ax[2].set_title("Test Set")
         ax[2].set_xlabel("Relation ID")
 
         plt.tight_layout()
+        plt.subplots_adjust(top=0.9)
         plt.show()
+
 
 
 if __name__ == "__main__":
     custom_distribution = CustomDistribution()
     custom_distribution.current_distribution()
-    # custom_distribution.plot_relation_distribution()
+    custom_distribution.plot_relation_distribution()
