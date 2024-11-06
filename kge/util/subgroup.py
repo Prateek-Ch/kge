@@ -13,12 +13,14 @@ class SubgroupEvaluator:
         self.group_type = group_type
         self.test_triples = self.model.dataset.split("test")
         self.train_triples = self.model.dataset.split("train")
+        self.relation_per_type = self.model.dataset.index("relations_per_type")
+
         self.results_df = pd.DataFrame(
-            columns=["Relation Strings", "Test Triple Count", "Train Triple Count", "Relation ID", "MR", "MRR", "Hits@1", "Hits@3", "Hits@10"]
+            columns=["Relation Strings", "Test Triple Count", "Train Triple Count", "Relation ID", "Relation Type", "MR", "MRR", "Hits@1", "Hits@3", "Hits@10"]
         )
 
         self.filtered_results_df = pd.DataFrame(
-            columns=["Relation Strings", "Test Triple Count", "Train Triple Count", "Relation ID", "Filtered MR", "Filtered MRR", "Filtered Hits@1", "Filtered Hits@3", "Filtered Hits@10"]
+            columns=["Relation Strings", "Test Triple Count", "Train Triple Count", "Relation ID", "Relation Type", "Filtered MR", "Filtered MRR", "Filtered Hits@1", "Filtered Hits@3", "Filtered Hits@10"]
         )
 
     def group_triples(self, triples):
@@ -72,6 +74,12 @@ class SubgroupEvaluator:
             else:
                 name = self.model.dataset.entity_strings(key)
 
+            # Retrieve relation type
+            for relation_type, value in self.relation_per_type.items():
+                if key in value:
+                    key_relation_type = relation_type
+                    break
+
             # Evaluate the subgroup
             results = self.evaluate(triples)
 
@@ -95,6 +103,7 @@ class SubgroupEvaluator:
                 "Test Triple Count": triple_count,
                 "Train Triple Count": train_triple_count,
                 "Relation ID": key,
+                "Relation Type": key_relation_type if key_relation_type else "",
                 "MR": mr,
                 "MRR": mrr,
                 "Hits@1": hits_at_1,
@@ -107,6 +116,7 @@ class SubgroupEvaluator:
                 "Test Triple Count": triple_count,
                 "Train Triple Count": train_triple_count,
                 "Relation ID": key,
+                "Relation Type": key_relation_type if key_relation_type else "",
                 "Filtered MR": filtered_mr,
                 "Filtered MRR": filtered_mrr,
                 "Filtered Hits@1": filtered_hits_at_1,
