@@ -150,6 +150,11 @@ class CustomDistribution:
         return train_triples, valid_triples
 
 
+#TODO: 
+# Improve the code quality.
+# Make all these functions reusable. Especially the plot one
+# Some code has interlap with the subgroups.py code as well. See how to modify stuff in both so we can use the reusable components.
+
 if __name__ == "__main__":
     custom_distribution = CustomDistribution()
     # custom_distribution.current_distribution()
