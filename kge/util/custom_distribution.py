@@ -5,6 +5,7 @@ from collections import defaultdict
 from kge.model import KgeModel
 from kge.util.io import load_checkpoint
 import random
+import os
 
 class CustomDistribution:
     COLUMNS_COUNT = ["Relation ID", "Relation Strings", "Train Triple Count", "Valid Triple Count", "Test Triple Count"]
@@ -149,14 +150,27 @@ class CustomDistribution:
 
         return train_triples, valid_triples
 
+    def save_triples(self, triples, filepath):
+        with open(filepath, "w") as f:
+            for triple in triples:
+                f.write("\t".join(map(str, triple.tolist())) + "\n")
+
 
 #TODO: 
 # Improve the code quality.
 # Make all these functions reusable. Especially the plot one
-# Some code has interlap with the subgroups.py code as well. See how to modify stuff in both so we can use the reusable components.
+# Some code has overlap with the subgroups.py code as well. See how to modify stuff in both so we can use the reusable components.
 
 if __name__ == "__main__":
     custom_distribution = CustomDistribution()
     # custom_distribution.current_distribution()
     # custom_distribution.plot_relation_distribution()
     train_triples, valid_triples = custom_distribution.sample_training_validation_set([0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.05,0.05])
+    dataset_folder = "data/custom_dataset"
+    os.makedirs(dataset_folder, exist_ok=True)
+
+    custom_distribution.save_triples(train_triples, os.path.join(dataset_folder, "train.txt"))
+    custom_distribution.save_triples(valid_triples, os.path.join(dataset_folder, "valid.txt"))
+    custom_distribution.save_triples(custom_distribution.model.dataset.split("test"), os.path.join(dataset_folder, "test.txt"))
+
+    print("Custom dataset saved.")
