@@ -1,8 +1,10 @@
+import torch
 import pandas as pd
 import matplotlib.pyplot as plt
 from collections import defaultdict
 from kge.model import KgeModel
 from kge.util.io import load_checkpoint
+import random
 
 class CustomDistribution:
     COLUMNS_COUNT = ["Relation ID", "Relation Strings", "Train Triple Count", "Valid Triple Count", "Test Triple Count"]
@@ -98,7 +100,7 @@ class CustomDistribution:
         ax[0].set_title("Training Set")
         ax[0].set_xlabel("Relation ID")
         ax[0].set_ylabel("Triple Count")
-        ax[0].tick_params(axis='x', rotation=45)
+        ax[0].tick_params(axis='x')
         # Bar plot for validation data
         ax[1].bar(valid_counts["Relation ID"], valid_counts["Valid Triple Count"], color="lightgreen")
         ax[1].set_ylim(0, max_valid * 1.1)
@@ -116,8 +118,40 @@ class CustomDistribution:
         plt.show()
 
 
+    def sample_training_validation_set(self, target_distribution):
+        """Samples the training and validation set based on the target distribution."""
+
+        all_triples = torch.cat((self.model.dataset.split("train"), self.model.dataset.split("valid")),dim=0)
+        relation_triples = defaultdict(list)
+
+        # Group triples by relation
+        for triple in all_triples:
+            relation_id = triple[1].item()
+            relation_triples[relation_id].append(triple)
+
+        # Calculate target number of triples per relation for training/validation
+        target_counts = {relation: int(len(all_triples) * prob) for relation, prob in zip(relation_triples.keys(), target_distribution)}
+
+        # Sample triples for each relation according to target_counts
+        train_valid_triples = []
+        for relation, count in target_counts.items():
+            available_triples = relation_triples[relation]
+            # Ensure we don't sample more than available
+            sample_size = min(count, len(available_triples))
+            sampled_triples = random.sample(available_triples, sample_size)
+            train_valid_triples.extend(sampled_triples)
+
+        # Shuffle and split into train and validation (e.g., 80-20 split)
+        random.shuffle(train_valid_triples)
+        split_index = int(len(train_valid_triples) * 0.8)
+        train_triples = train_valid_triples[:split_index]
+        valid_triples = train_valid_triples[split_index:]
+
+        return train_triples, valid_triples
+
 
 if __name__ == "__main__":
     custom_distribution = CustomDistribution()
-    custom_distribution.current_distribution()
-    custom_distribution.plot_relation_distribution()
+    # custom_distribution.current_distribution()
+    # custom_distribution.plot_relation_distribution()
+    train_triples, valid_triples = custom_distribution.sample_training_validation_set([0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.05,0.05])
