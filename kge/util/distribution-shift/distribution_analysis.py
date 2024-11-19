@@ -12,19 +12,6 @@ class DistributionAnalysis:
         _, self.dataset = dsutils.load_model_and_dataset(checkpoint_path)
         self.current_relation_count_df = pd.DataFrame(columns=self.COLUMNS_COUNT)
         self.current_relation_distribution_df = pd.DataFrame(columns=self.COLUMNS_DISTRIBUTION)
-    
-    def _count_triples_per_relation(self) -> dict:
-        """Counts triples per relation in train, test, and validation splits."""
-        relation_counts = {"train": defaultdict(int), "test": defaultdict(int), "valid": defaultdict(int)}
-        
-        for split in relation_counts:
-            triples = self.dataset.split(split)
-            relation_counts[split]["total_count"] = len(triples)
-            for triple in triples:
-                relation_id = triple[1].item()
-                relation_counts[split][relation_id] += 1
-
-        return relation_counts
 
     def _create_dataframes(self, relation_counts: dict):
         """Populates DataFrames for counts and distributions based on relation counts."""
@@ -62,7 +49,13 @@ class DistributionAnalysis:
         self.current_relation_distribution_df = pd.concat([self.current_relation_distribution_df, pd.DataFrame(rows_distribution)], ignore_index=True)
 
     def current_distribution(self):
-        relation_counts = self._count_triples_per_relation()
+        relation_counts = {}
+        for split in ["train", "test", "valid"]:
+            triples = self.dataset.split(split)
+            counts_per_relation = dsutils.get_triples_counts_per_group(triples, group_type="relation")
+            counts_per_relation["total_count"] = len(triples)
+            relation_counts[split] = counts_per_relation
+
         self._create_dataframes(relation_counts)
 
         print("\nCurrent Triple Count:")

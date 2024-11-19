@@ -3,7 +3,6 @@ import pandas as pd
 import distribution_shift_utils as dsutils
 
 from kge.job.eval import EvaluationJob
-from collections import defaultdict
 
 class SubgroupEvaluator:
     def __init__(self, checkpoint_path, group_type):
@@ -21,27 +20,6 @@ class SubgroupEvaluator:
         self.filtered_results_df = pd.DataFrame(
             columns=["Relation Strings", "Test Triple Count", "Train Triple Count", "Relation ID", "Relation Type", "Filtered MR", "Filtered MRR", "Filtered Hits@1", "Filtered Hits@3", "Filtered Hits@10"]
         )
-
-    def group_triples(self, triples):
-        """Groups triples by the specified type (subject, relation, or object)."""
-        groups = defaultdict(list)
-        for triple in triples:
-            if self.group_type == "subject":
-                key = triple[0].item()
-            elif self.group_type == "relation":
-                key = triple[1].item()
-            elif self.group_type == "object":
-                key = triple[2].item()
-            else:
-                raise ValueError("Invalid group_type. Choose from 'subject', 'relation', or 'object'.")
-            groups[key].append(triple)
-        return groups
-
-    def get_train_counts(self):
-        """Counts training triples for each subgroup and returns a dictionary."""
-        train_groups = self.group_triples(self.train_triples)
-        train_counts = {key: len(triples) for key, triples in train_groups.items()}
-        return train_counts
 
     def evaluate(self, triples):
         """Evaluates a batch of triples and returns results such as MRR and Hits@k."""
@@ -63,8 +41,8 @@ class SubgroupEvaluator:
     def eval_subgroups(self):
         """Evaluates and prints results for each subgroup based on the grouping type."""  
 
-        test_groups = self.group_triples(self.test_triples)
-        train_counts = self.get_train_counts()
+        test_groups = dsutils.group_triples(self.test_triples, self.group_type)
+        train_counts = dsutils.get_triples_counts_per_group(self.train_triples, self.group_type)
 
         for key, triples in test_groups.items():
             # Retrieve the relation name for the relation ID if group_type is relation

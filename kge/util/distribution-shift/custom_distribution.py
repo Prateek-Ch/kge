@@ -14,12 +14,7 @@ class CustomDistribution:
         """Samples the training and validation set based on the target distribution."""
 
         all_triples = torch.cat((self.dataset.split("train"), self.dataset.split("valid")),dim=0)
-        relation_triples = defaultdict(list)
-
-        # Group triples by relation
-        for triple in all_triples:
-            relation_id = triple[1].item()
-            relation_triples[relation_id].append(triple)
+        relation_triples = dsutils.group_triples(all_triples, group_type="relation")
 
         # Calculate target number of triples per relation for training/validation
         target_counts = {relation: int(len(all_triples) * prob) for relation, prob in zip(relation_triples.keys(), self.target_distribution)}
