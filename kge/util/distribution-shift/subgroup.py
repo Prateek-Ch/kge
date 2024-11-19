@@ -1,8 +1,5 @@
-import torch
 import pandas as pd
 import distribution_shift_utils as dsutils
-
-from kge.job.eval import EvaluationJob
 
 class SubgroupEvaluator:
     def __init__(self, checkpoint_path, group_type):
@@ -20,23 +17,6 @@ class SubgroupEvaluator:
         self.filtered_results_df = pd.DataFrame(
             columns=["Relation Strings", "Test Triple Count", "Train Triple Count", "Relation ID", "Relation Type", "Filtered MR", "Filtered MRR", "Filtered Hits@1", "Filtered Hits@3", "Filtered Hits@10"]
         )
-
-    def evaluate(self, triples):
-        """Evaluates a batch of triples and returns results such as MRR and Hits@k."""
-        
-        triples_tensor = torch.stack(triples).to(self.model.config.get("job.device"))
-
-        eval_job = EvaluationJob.create(self.model.config, dataset=self.dataset, model=self.model)
-        eval_job._prepare()
-        
-        custom_loader = torch.utils.data.DataLoader(
-            triples_tensor, batch_size=self.model.config.get("eval.batch_size"), shuffle=False,
-            collate_fn=eval_job._collate,
-        )
-        eval_job.loader = custom_loader
-        eval_job.result = eval_job._run()
-
-        return eval_job.result
 
     def eval_subgroups(self):
         """Evaluates and prints results for each subgroup based on the grouping type."""  
@@ -58,7 +38,7 @@ class SubgroupEvaluator:
                     break
 
             # Evaluate the subgroup
-            results = self.evaluate(triples)
+            results = dsutils.evaluate(self.model, self.dataset, triples)
 
             # Extract metrics
             mr = results["mean_rank"]  # Mean Rank

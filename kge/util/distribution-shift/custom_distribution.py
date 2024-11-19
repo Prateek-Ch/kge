@@ -36,11 +36,6 @@ class CustomDistribution:
 
         return train_triples, valid_triples
 
-    def save_triples(self, triples, filepath):
-        with open(filepath, "w") as f:
-            for triple in triples:
-                f.write("\t".join(map(str, triple.tolist())) + "\n")
-
 
 #TODO: 
 # Improve the code quality.
@@ -54,8 +49,8 @@ if __name__ == "__main__":
     dataset_folder = "data/custom_dataset"
     os.makedirs(dataset_folder, exist_ok=True)
 
-    custom_distribution.save_triples(train_triples, os.path.join(dataset_folder, "train.txt"))
-    custom_distribution.save_triples(valid_triples, os.path.join(dataset_folder, "valid.txt"))
-    custom_distribution.save_triples(custom_distribution.dataset.split("test"), os.path.join(dataset_folder, "test.txt"))
+    dsutils.save_triples(train_triples, os.path.join(dataset_folder, "train.txt"))
+    dsutils.save_triples(valid_triples, os.path.join(dataset_folder, "valid.txt"))
+    dsutils.save_triples(custom_distribution.dataset.split("test"), os.path.join(dataset_folder, "test.txt"))
 
     print("Custom dataset saved.")
