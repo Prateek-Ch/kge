@@ -2,8 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import distribution_shift_utils as dsutils
 
-from collections import defaultdict
-
 class DistributionAnalysis:
     COLUMNS_COUNT = ["Relation ID", "Relation Strings", "Train Triple Count", "Valid Triple Count", "Test Triple Count"]
     COLUMNS_DISTRIBUTION = ["Relation ID", "Relation Strings", "Train Triple Distribution", "Valid Triple Distribution", "Test Triple Distribution"]

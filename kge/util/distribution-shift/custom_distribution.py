@@ -1,5 +1,4 @@
 import torch
-from collections import defaultdict
 import distribution_shift_utils as dsutils
 
 import random
