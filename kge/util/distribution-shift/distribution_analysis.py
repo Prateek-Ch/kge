@@ -83,25 +83,22 @@ class DistributionAnalysis:
         max_valid = valid_counts["Valid Triple Count"].max()
         max_test = test_counts["Test Triple Count"].max()
 
-        # Bar plot for training data
-        ax[0].bar(train_counts["Relation ID"], train_counts["Train Triple Count"], color="skyblue")
-        ax[0].set_ylim(0, max_train * 1.1)
-        ax[0].set_title("Training Set")
-        ax[0].set_xlabel("Relation ID")
-        ax[0].set_ylabel("Triple Count")
-        ax[0].tick_params(axis='x')
-        # Bar plot for validation data
-        ax[1].bar(valid_counts["Relation ID"], valid_counts["Valid Triple Count"], color="lightgreen")
-        ax[1].set_ylim(0, max_valid * 1.1)
-        ax[1].set_title("Validation Set")
-        ax[1].set_xlabel("Relation ID")
+        # Use the utility function to plot each bar plot
+        dsutils.plot_bar(ax[0], 
+                train_counts["Relation ID"], train_counts["Train Triple Count"], 
+                title="Training Set", xlabel="Relation ID", ylabel="Triple Count", 
+                color="skyblue", ylim=(0, max_train * 1.1))
         
-        # Bar plot for test data
-        ax[2].bar(test_counts["Relation ID"], test_counts["Test Triple Count"], color="salmon")
-        ax[2].set_ylim(0, max_test * 1.1)
-        ax[2].set_title("Test Set")
-        ax[2].set_xlabel("Relation ID")
-
+        dsutils.plot_bar(ax[1], 
+                valid_counts["Relation ID"], valid_counts["Valid Triple Count"], 
+                title="Validation Set", xlabel="Relation ID", ylabel="", 
+                color="lightgreen", ylim=(0, max_valid * 1.1))
+        
+        dsutils.plot_bar(ax[2], 
+                test_counts["Relation ID"], test_counts["Test Triple Count"], 
+                title="Test Set", xlabel="Relation ID", ylabel="", 
+                color="salmon", ylim=(0, max_test * 1.1))
+        
         plt.tight_layout()
         plt.subplots_adjust(top=0.9)
         plt.show()

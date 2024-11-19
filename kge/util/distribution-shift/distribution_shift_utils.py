@@ -45,4 +45,26 @@ def evaluate(model: KgeModel, dataset, triples):
             collate_fn=eval_job._collate,
         )
         return eval_job._run()
+
+def plot_bar(ax, x, y, title, xlabel, ylabel, color, ylim=None):
+    """
+    Utility function to create a bar plot on a given axis.
+
+    Parameters:
+    - ax: matplotlib axis
+    - x: Data for x-axis
+    - y: Data for y-axis
+    - title: Title of the plot
+    - xlabel: Label for the x-axis
+    - ylabel: Label for the y-axis
+    - color: Color for the bars
+    - ylim: Tuple specifying y-axis limits (optional)
+    """
+    ax.bar(x, y, color=color)
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    if ylim:
+        ax.set_ylim(ylim)
+    ax.tick_params(axis='x')
         
