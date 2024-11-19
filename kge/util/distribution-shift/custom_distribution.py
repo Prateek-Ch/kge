@@ -6,13 +6,13 @@ import random
 import os
 
 class CustomDistribution:
-    def __init__(self, checkpoint_path):
+    def __init__(self, checkpoint_path, target_distribution):
         self.checkpoint_path = checkpoint_path
         self.checkpoint = load_checkpoint(self.checkpoint_path)
         self.model = KgeModel.create_from(self.checkpoint)
+        self.target_distribution = target_distribution
 
-
-    def sample_training_validation_set(self, target_distribution):
+    def sample_training_validation_set(self):
         """Samples the training and validation set based on the target distribution."""
 
         all_triples = torch.cat((self.model.dataset.split("train"), self.model.dataset.split("valid")),dim=0)
@@ -24,7 +24,7 @@ class CustomDistribution:
             relation_triples[relation_id].append(triple)
 
         # Calculate target number of triples per relation for training/validation
-        target_counts = {relation: int(len(all_triples) * prob) for relation, prob in zip(relation_triples.keys(), target_distribution)}
+        target_counts = {relation: int(len(all_triples) * prob) for relation, prob in zip(relation_triples.keys(), self.target_distribution)}
 
         # Sample triples for each relation according to target_counts
         train_valid_triples = []
@@ -55,8 +55,9 @@ class CustomDistribution:
 # Some code has overlap with the subgroups.py code as well. See how to modify stuff in both so we can use the reusable components.
 
 if __name__ == "__main__":
-    custom_distribution = CustomDistribution('local/experiments/20241119-072058-wnrr-rescal/checkpoint_best.pt')
-    train_triples, valid_triples = custom_distribution.sample_training_validation_set([0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.05,0.05])
+    custom_distribution = CustomDistribution('local/experiments/20241119-072058-wnrr-rescal/checkpoint_best.pt', 
+                                             [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.05,0.05])
+    train_triples, valid_triples = custom_distribution.sample_training_validation_set()
     dataset_folder = "data/custom_dataset"
     os.makedirs(dataset_folder, exist_ok=True)
 
