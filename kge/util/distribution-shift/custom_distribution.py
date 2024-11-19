@@ -11,7 +11,7 @@ class CustomDistribution:
     COLUMNS_COUNT = ["Relation ID", "Relation Strings", "Train Triple Count", "Valid Triple Count", "Test Triple Count"]
     COLUMNS_DISTRIBUTION = ["Relation ID", "Relation Strings", "Train Triple Distribution", "Valid Triple Distribution", "Test Triple Distribution"]
 
-    def __init__(self, checkpoint_path: str = 'local/experiments/20241119-072058-wnrr-rescal/checkpoint_best.pt'):
+    def __init__(self, checkpoint_path):
         self.checkpoint_path = checkpoint_path
         self.checkpoint = load_checkpoint(self.checkpoint_path)
         self.model = KgeModel.create_from(self.checkpoint)
@@ -162,7 +162,7 @@ class CustomDistribution:
 # Some code has overlap with the subgroups.py code as well. See how to modify stuff in both so we can use the reusable components.
 
 if __name__ == "__main__":
-    custom_distribution = CustomDistribution()
+    custom_distribution = CustomDistribution('local/experiments/20241119-072058-wnrr-rescal/checkpoint_best.pt')
     custom_distribution.current_distribution()
     custom_distribution.plot_relation_distribution()
     # train_triples, valid_triples = custom_distribution.sample_training_validation_set([0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.05,0.05])
