@@ -131,7 +131,7 @@ class SubgroupEvaluator:
 
 if __name__ == "__main__":
     evaluator = SubgroupEvaluator(
-        checkpoint_path='local/experiments/20241021-193745-wnrr-rescal/checkpoint_best.pt',
+        checkpoint_path='local/experiments/20241118-205700-custom-rescal/checkpoint_best.pt',
         group_type="relation"  # Change to "subject" or "object" as needed
     )
     evaluator.eval_subgroups()
