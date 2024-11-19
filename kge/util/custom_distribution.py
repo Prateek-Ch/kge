@@ -11,7 +11,7 @@ class CustomDistribution:
     COLUMNS_COUNT = ["Relation ID", "Relation Strings", "Train Triple Count", "Valid Triple Count", "Test Triple Count"]
     COLUMNS_DISTRIBUTION = ["Relation ID", "Relation Strings", "Train Triple Distribution", "Valid Triple Distribution", "Test Triple Distribution"]
 
-    def __init__(self, checkpoint_path: str = 'local/experiments/20241021-193745-wnrr-rescal/checkpoint_best.pt'):
+    def __init__(self, checkpoint_path: str = 'local/experiments/20241119-072058-wnrr-rescal/checkpoint_best.pt'):
         self.checkpoint_path = checkpoint_path
         self.checkpoint = load_checkpoint(self.checkpoint_path)
         self.model = KgeModel.create_from(self.checkpoint)
@@ -163,14 +163,14 @@ class CustomDistribution:
 
 if __name__ == "__main__":
     custom_distribution = CustomDistribution()
-    # custom_distribution.current_distribution()
-    # custom_distribution.plot_relation_distribution()
-    train_triples, valid_triples = custom_distribution.sample_training_validation_set([0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.05,0.05])
-    dataset_folder = "data/custom_dataset"
-    os.makedirs(dataset_folder, exist_ok=True)
+    custom_distribution.current_distribution()
+    custom_distribution.plot_relation_distribution()
+    # train_triples, valid_triples = custom_distribution.sample_training_validation_set([0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.05,0.05])
+    # dataset_folder = "data/custom_dataset"
+    # os.makedirs(dataset_folder, exist_ok=True)
 
-    custom_distribution.save_triples(train_triples, os.path.join(dataset_folder, "train.txt"))
-    custom_distribution.save_triples(valid_triples, os.path.join(dataset_folder, "valid.txt"))
-    custom_distribution.save_triples(custom_distribution.model.dataset.split("test"), os.path.join(dataset_folder, "test.txt"))
+    # custom_distribution.save_triples(train_triples, os.path.join(dataset_folder, "train.txt"))
+    # custom_distribution.save_triples(valid_triples, os.path.join(dataset_folder, "valid.txt"))
+    # custom_distribution.save_triples(custom_distribution.model.dataset.split("test"), os.path.join(dataset_folder, "test.txt"))
 
-    print("Custom dataset saved.")
+    # print("Custom dataset saved.")
