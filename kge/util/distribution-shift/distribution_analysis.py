@@ -116,6 +116,6 @@ class DistributionAnalysis:
         plt.show()
 
 if __name__ == "__main__":
-    custom_distribution = DistributionAnalysis('local/experiments/20241119-072058-wnrr-rescal/checkpoint_best.pt')
+    custom_distribution = DistributionAnalysis('local/experiments/20241118-205700-custom-rescal/checkpoint_best.pt')
     custom_distribution.current_distribution()
     custom_distribution.plot_relation_distribution()
