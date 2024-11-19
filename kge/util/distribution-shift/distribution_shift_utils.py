@@ -1,4 +1,5 @@
 import torch
+import pandas as pd
 
 from kge.model import KgeModel
 from kge.util.io import load_checkpoint
@@ -67,4 +68,66 @@ def plot_bar(ax, x, y, title, xlabel, ylabel, color, ylim=None):
     if ylim:
         ax.set_ylim(ylim)
     ax.tick_params(axis='x')
+
+
+# Dataframes related stuff
+# Constants for distribution analysis column names
+RELATION_COLUMNS_COUNT = ["Relation ID", "Relation Strings", "Train Triple Count", "Valid Triple Count", "Test Triple Count"]
+RELATION_COLUMNS_DISTRIBUTION = ["Relation ID", "Relation Strings", "Train Triple Distribution", "Valid Triple Distribution", "Test Triple Distribution"]
+
+# Constants for subgroups evaluation column names
+EVALUATION_COLUMNS = ["Relation ID","Relation Strings", "Test Triple Count", "Train Triple Count", "Relation Type", "MR", "MRR", "Hits@1", "Hits@3", "Hits@10"]
+FILTERED_EVALUATION_COLUMNS = ["Relation ID", "Relation Strings", "Test Triple Count", "Train Triple Count", "Relation Type", "Filtered MR", "Filtered MRR", "Filtered Hits@1", "Filtered Hits@3", "Filtered Hits@10"]
+
+# Utility functions
+def create_dataframe(columns):
+    """Create an empty DataFrame with specified columns."""
+    return pd.DataFrame(columns=columns)
+
+def append_to_dataframe(df, rows_data):
+    """Append rows to the DataFrame."""
+    if isinstance(rows_data, list):
+        return pd.concat([df, pd.DataFrame(rows_data)], ignore_index=True)
+    elif isinstance(rows_data, dict):
+        return pd.concat([df, pd.DataFrame([rows_data])], ignore_index=True)
+    else:
+        raise ValueError("Invalid row data format. Must be a list or dictionary.")
+
+
+def calculate_distribution(count, total_count):
+    """Safely calculate the distribution."""
+    return count / (total_count or 1)  # Avoid division by zero
+
+def counts_and_distribution_rows(relation_counts, dataset):
+    """Generate rows for counts and distributions."""
+    rows_count = []
+    rows_distribution = []
+
+    for relation_id, train_count in relation_counts["train"].items():
+        if relation_id == "total_count":
+            continue
+
+        relation_name = dataset.relation_strings(relation_id)
+        valid_count = relation_counts["valid"].get(relation_id, 0)
+        test_count = relation_counts["test"].get(relation_id, 0)
+        train_total = relation_counts["train"].get("total_count", 1)
+        valid_total = relation_counts["valid"].get("total_count", 1)
+        test_total = relation_counts["test"].get("total_count", 1)
+
+        rows_count.append({
+            "Relation ID": relation_id,
+            "Relation Strings": relation_name if relation_name else "",
+            "Train Triple Count": train_count,
+            "Valid Triple Count": valid_count,
+            "Test Triple Count": test_count
+        })
+        rows_distribution.append({
+            "Relation ID": relation_id,
+            "Relation Strings": relation_name if relation_name else "",
+            "Train Triple Distribution": calculate_distribution(train_count, train_total),
+            "Valid Triple Distribution": calculate_distribution(valid_count, valid_total),
+            "Test Triple Distribution": calculate_distribution(test_count, test_total)
+        })
+
+    return rows_count, rows_distribution
         

@@ -1,4 +1,3 @@
-import pandas as pd
 import distribution_shift_utils as dsutils
 
 class SubgroupEvaluator:
@@ -10,13 +9,8 @@ class SubgroupEvaluator:
         self.train_triples = self.dataset.split("train")
         self.relation_per_type = self.dataset.index("relations_per_type")
 
-        self.results_df = pd.DataFrame(
-            columns=["Relation Strings", "Test Triple Count", "Train Triple Count", "Relation ID", "Relation Type", "MR", "MRR", "Hits@1", "Hits@3", "Hits@10"]
-        )
-
-        self.filtered_results_df = pd.DataFrame(
-            columns=["Relation Strings", "Test Triple Count", "Train Triple Count", "Relation ID", "Relation Type", "Filtered MR", "Filtered MRR", "Filtered Hits@1", "Filtered Hits@3", "Filtered Hits@10"]
-        )
+        self.results_df = dsutils.create_dataframe(dsutils.EVALUATION_COLUMNS)
+        self.filtered_results_df = dsutils.create_dataframe(dsutils.FILTERED_EVALUATION_COLUMNS)
 
     def eval_subgroups(self):
         """Evaluates and prints results for each subgroup based on the grouping type."""  
@@ -39,56 +33,35 @@ class SubgroupEvaluator:
 
             # Evaluate the subgroup
             results = dsutils.evaluate(self.model, self.dataset, triples)
+            row_data = {
+                "Relation Strings": name, "Test Triple Count": len(triples), 
+                "Train Triple Count": train_counts.get(key, 0), "Relation ID": key, 
+                "Relation Type": key_relation_type,
+            }
+            results_data = {
+                **row_data, **{"MR": results["mean_rank"], 
+                "MRR": results["mean_reciprocal_rank"], "Hits@1": results["hits_at_1"], 
+                "Hits@3": results["hits_at_3"], "Hits@10": results["hits_at_10"]
+            }}
+            filtered_results_data = {**row_data, **{
+                "Filtered MR": results["mean_rank_filtered"], 
+                "Filtered MRR": results["mean_reciprocal_rank_filtered"], 
+                "Filtered Hits@1": results["hits_at_1_filtered"], 
+                "Filtered Hits@3": results["hits_at_3_filtered"], 
+                "Filtered Hits@10": results["hits_at_10_filtered"]
+            }}
 
-            # Extract metrics
-            mr = results["mean_rank"]  # Mean Rank
-            mrr = results["mean_reciprocal_rank"]  # Mean Reciprocal Rank
-            hits_at_1 = results["hits_at_1"]
-            hits_at_3 = results["hits_at_3"]
-            hits_at_10 = results["hits_at_10"]
-            triple_count = len(triples)
-            train_triple_count = train_counts.get(key, 0)
-            filtered_mr = results["mean_rank_filtered"]
-            filtered_mrr = results["mean_reciprocal_rank_filtered"]
-            filtered_hits_at_1 = results["hits_at_1_filtered"]
-            filtered_hits_at_3 = results["hits_at_3_filtered"]
-            filtered_hits_at_10 = results["hits_at_10_filtered"]
-
-            # Append results to DataFrame
-            self.results_df = self.results_df._append({
-                "Relation Strings": name if name else "",
-                "Test Triple Count": triple_count,
-                "Train Triple Count": train_triple_count,
-                "Relation ID": key,
-                "Relation Type": key_relation_type if key_relation_type else "",
-                "MR": mr,
-                "MRR": mrr,
-                "Hits@1": hits_at_1,
-                "Hits@3": hits_at_3,
-                "Hits@10": hits_at_10,
-            }, ignore_index=True)
-
-            self.filtered_results_df = self.filtered_results_df._append({
-                "Relation Strings": name if name else "",
-                "Test Triple Count": triple_count,
-                "Train Triple Count": train_triple_count,
-                "Relation ID": key,
-                "Relation Type": key_relation_type if key_relation_type else "",
-                "Filtered MR": filtered_mr,
-                "Filtered MRR": filtered_mrr,
-                "Filtered Hits@1": filtered_hits_at_1,
-                "Filtered Hits@3": filtered_hits_at_3,
-                "Filtered Hits@10": filtered_hits_at_10,
-            }, ignore_index=True)
+            self.results_df = dsutils.append_to_dataframe(self.results_df, results_data)
+            self.filtered_results_df = dsutils.append_to_dataframe(self.filtered_results_df, filtered_results_data)
 
         print("Evaluation results:")
         print(self.results_df)
-        print("\n Filtered Evaluation results:")
+        print("\nFiltered Evaluation results:")
         print(self.filtered_results_df)
 
 if __name__ == "__main__":
     evaluator = SubgroupEvaluator(
-        checkpoint_path='local/experiments/20241118-205700-custom-rescal/checkpoint_best.pt',
+        checkpoint_path='local/experiments/20241119-072058-wnrr-rescal/checkpoint_best.pt',
         group_type="relation"  # Change to "subject" or "object" as needed
     )
     evaluator.eval_subgroups()
