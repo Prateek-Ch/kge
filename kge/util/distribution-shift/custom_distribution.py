@@ -1,21 +1,19 @@
 import torch
 from collections import defaultdict
-from kge.model import KgeModel
-from kge.util.io import load_checkpoint
+import distribution_shift_utils as dsutils
+
 import random
 import os
 
 class CustomDistribution:
     def __init__(self, checkpoint_path, target_distribution):
-        self.checkpoint_path = checkpoint_path
-        self.checkpoint = load_checkpoint(self.checkpoint_path)
-        self.model = KgeModel.create_from(self.checkpoint)
+        _, self.dataset = dsutils.load_model_and_dataset(checkpoint_path)
         self.target_distribution = target_distribution
 
     def sample_training_validation_set(self):
         """Samples the training and validation set based on the target distribution."""
 
-        all_triples = torch.cat((self.model.dataset.split("train"), self.model.dataset.split("valid")),dim=0)
+        all_triples = torch.cat((self.dataset.split("train"), self.dataset.split("valid")),dim=0)
         relation_triples = defaultdict(list)
 
         # Group triples by relation
@@ -63,6 +61,6 @@ if __name__ == "__main__":
 
     custom_distribution.save_triples(train_triples, os.path.join(dataset_folder, "train.txt"))
     custom_distribution.save_triples(valid_triples, os.path.join(dataset_folder, "valid.txt"))
-    custom_distribution.save_triples(custom_distribution.model.dataset.split("test"), os.path.join(dataset_folder, "test.txt"))
+    custom_distribution.save_triples(custom_distribution.dataset.split("test"), os.path.join(dataset_folder, "test.txt"))
 
     print("Custom dataset saved.")

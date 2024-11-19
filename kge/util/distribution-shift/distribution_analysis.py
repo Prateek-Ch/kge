@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from kge.model import KgeModel
-from kge.util.io import load_checkpoint
+import distribution_shift_utils as dsutils
+
 from collections import defaultdict
 
 class DistributionAnalysis:
@@ -9,9 +9,7 @@ class DistributionAnalysis:
     COLUMNS_DISTRIBUTION = ["Relation ID", "Relation Strings", "Train Triple Distribution", "Valid Triple Distribution", "Test Triple Distribution"]
 
     def __init__(self, checkpoint_path):
-        self.checkpoint_path = checkpoint_path
-        self.checkpoint = load_checkpoint(self.checkpoint_path)
-        self.model = KgeModel.create_from(self.checkpoint)
+        _, self.dataset = dsutils.load_model_and_dataset(checkpoint_path)
         self.current_relation_count_df = pd.DataFrame(columns=self.COLUMNS_COUNT)
         self.current_relation_distribution_df = pd.DataFrame(columns=self.COLUMNS_DISTRIBUTION)
     
@@ -20,7 +18,7 @@ class DistributionAnalysis:
         relation_counts = {"train": defaultdict(int), "test": defaultdict(int), "valid": defaultdict(int)}
         
         for split in relation_counts:
-            triples = self.model.dataset.split(split)
+            triples = self.dataset.split(split)
             relation_counts[split]["total_count"] = len(triples)
             for triple in triples:
                 relation_id = triple[1].item()
@@ -37,7 +35,7 @@ class DistributionAnalysis:
             if relation_id == "total_count":
                 continue
 
-            relation_name = self.model.dataset.relation_strings(relation_id)
+            relation_name = self.dataset.relation_strings(relation_id)
             train_count = relation_counts["train"][relation_id]
             valid_count = relation_counts["valid"][relation_id]
             test_count = relation_counts["test"][relation_id]

@@ -1,19 +1,18 @@
 import torch
 import pandas as pd
+import distribution_shift_utils as dsutils
+
 from kge.job.eval import EvaluationJob
-from kge.model import KgeModel
-from kge.util.io import load_checkpoint
 from collections import defaultdict
 
 class SubgroupEvaluator:
     def __init__(self, checkpoint_path, group_type):
         # Load model and set the grouping type
-        self.checkpoint = load_checkpoint(checkpoint_path)
-        self.model = KgeModel.create_from(self.checkpoint)
+        self.model, self.dataset = dsutils.load_model_and_dataset(checkpoint_path)
         self.group_type = group_type
-        self.test_triples = self.model.dataset.split("test")
-        self.train_triples = self.model.dataset.split("train")
-        self.relation_per_type = self.model.dataset.index("relations_per_type")
+        self.test_triples = self.dataset.split("test")
+        self.train_triples = self.dataset.split("train")
+        self.relation_per_type = self.dataset.index("relations_per_type")
 
         self.results_df = pd.DataFrame(
             columns=["Relation Strings", "Test Triple Count", "Train Triple Count", "Relation ID", "Relation Type", "MR", "MRR", "Hits@1", "Hits@3", "Hits@10"]
@@ -49,7 +48,7 @@ class SubgroupEvaluator:
         
         triples_tensor = torch.stack(triples).to(self.model.config.get("job.device"))
 
-        eval_job = EvaluationJob.create(self.model.config, dataset=self.model.dataset, model=self.model)
+        eval_job = EvaluationJob.create(self.model.config, dataset=self.dataset, model=self.model)
         eval_job._prepare()
         
         custom_loader = torch.utils.data.DataLoader(
@@ -70,9 +69,9 @@ class SubgroupEvaluator:
         for key, triples in test_groups.items():
             # Retrieve the relation name for the relation ID if group_type is relation
             if self.group_type == "relation":
-                name = self.model.dataset.relation_strings(key)
+                name = self.dataset.relation_strings(key)
             else:
-                name = self.model.dataset.entity_strings(key)
+                name = self.dataset.entity_strings(key)
 
             # Retrieve relation type
             for relation_type, value in self.relation_per_type.items():
