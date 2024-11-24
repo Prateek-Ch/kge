@@ -33,7 +33,10 @@ def save_triples(triples, filepath):
 
         with open(filepath, "w") as f:
             for triple in triples:
-                f.write("\t".join(map(str, triple.tolist())) + "\n")
+                if isinstance(triple, list):
+                    f.write("\t".join(map(str, triple)) + "\n")
+                else:     
+                    f.write("\t".join(map(str, triple.tolist())) + "\n")
 
 def evaluate(model: KgeModel, dataset, triples):
         """Evaluates a batch of triples and returns results such as MRR and Hits@k."""

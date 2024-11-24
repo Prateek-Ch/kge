@@ -3,7 +3,7 @@ job.type: train
 KvsAll:
   label_smoothing: 0.3
 dataset:
-  name: custom-dataset
+  name: custom-dataset-updated
 eval:
   batch_size: 256
   metrics_per:
