@@ -52,6 +52,6 @@ class DistributionAnalysis:
         plt.show()
 
 if __name__ == "__main__":
-    analysis = DistributionAnalysis('local/experiments/20241118-205700-custom-rescal/checkpoint_best.pt')
+    analysis = DistributionAnalysis('local/experiments/20241125-062127-custom-rescal/checkpoint_best.pt')
     analysis.current_distribution()
     analysis.plot_relation_distribution()
