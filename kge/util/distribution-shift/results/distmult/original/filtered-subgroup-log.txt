@@ -1,4 +1,3 @@
-Filtered Evaluation results:
    Relation ID              Relation Strings Test Triple Count Train Triple Count Relation Type  Filtered MR  Filtered MRR  Filtered Hits@1  Filtered Hits@3  Filtered Hits@10
 0            0                      _hyponym              1153              34832           1-N   399.332611      0.882266         0.837814         0.920208          0.952732
 1            1                     _hypernym              1251              34796           M-1   373.127098      0.876878         0.830935         0.915268          0.950040

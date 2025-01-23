@@ -1,4 +1,3 @@
-Evaluation results:
    Relation ID              Relation Strings Test Triple Count Train Triple Count Relation Type          MR      MRR   Hits@1   Hits@3  Hits@10
 0            0                      _hyponym              1236               7500           1-N 9027.977346 0.291926 0.250809 0.316343 0.369741
 1            1                     _hypernym              1189               7218           M-1 8442.488646 0.300485 0.258621 0.326745 0.376787
