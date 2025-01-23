@@ -1,0 +1,49 @@
+Running Distribution Analysis for /hkfs/home/project/hk-project-test-p0021631/st_st190139/kge/local/experiments/wn18-rescal-0.05...
+Loading configuration of dataset custom-dataset-0.05 from /hkfs/home/project/hk-project-test-p0021631/st_st190139/kge/data/custom-dataset-0.05 ...
+Loaded 18 keys from map relation_ids
+Loaded 60156 train triples
+Loaded 4834 test triples
+Loaded 7436 valid triples
+Loaded 18 keys from map relation_strings
+
+Current Triple Count:
+   Relation ID              Relation Strings Train Triple Count Valid Triple Count Test Triple Count
+0            0                      _hyponym               7204                916              1229
+1           14       _synset_domain_usage_of                574                 80                25
+2            1                     _hypernym               7022                838              1200
+3            2               _member_holonym               6804                845               253
+4            8                      _part_of               4434                548               120
+5            3  _derivationally_related_form               7138                878              1010
+6           11                     _has_part               4442                527               150
+7            6               _member_meronym               6884                790               253
+8            9             _instance_hyponym               2702                339               103
+9            4            _instance_hypernym               2666                361               111
+10          13      _member_of_domain_region                863                 93                22
+11           7       _member_of_domain_topic               2868                361               104
+12          10       _synset_domain_topic_of               2812                408               109
+13           5                     _also_see               1206                133                54
+14          12       _member_of_domain_usage                580                 70                19
+15          15      _synset_domain_region_of                850                 94                36
+16          16                   _verb_group               1030                150                35
+17          17                   _similar_to                 77                  5                 1
+
+Current Triple Distribution:
+   Relation ID              Relation Strings  Train Triple Distribution  Valid Triple Distribution  Test Triple Distribution
+0            0                      _hyponym                   0.119755                   0.123185                  0.254241
+1           14       _synset_domain_usage_of                   0.009542                   0.010758                  0.005172
+2            1                     _hypernym                   0.116730                   0.112695                  0.248242
+3            2               _member_holonym                   0.113106                   0.113636                  0.052338
+4            8                      _part_of                   0.073708                   0.073696                  0.024824
+5            3  _derivationally_related_form                   0.118658                   0.118074                  0.208937
+6           11                     _has_part                   0.073841                   0.070871                  0.031030
+7            6               _member_meronym                   0.114436                   0.106240                  0.052338
+8            9             _instance_hyponym                   0.044917                   0.045589                  0.021307
+9            4            _instance_hypernym                   0.044318                   0.048548                  0.022962
+10          13      _member_of_domain_region                   0.014346                   0.012507                  0.004551
+11           7       _member_of_domain_topic                   0.047676                   0.048548                  0.021514
+12          10       _synset_domain_topic_of                   0.046745                   0.054868                  0.022549
+13           5                     _also_see                   0.020048                   0.017886                  0.011171
+14          12       _member_of_domain_usage                   0.009642                   0.009414                  0.003930
+15          15      _synset_domain_region_of                   0.014130                   0.012641                  0.007447
+16          16                   _verb_group                   0.017122                   0.020172                  0.007240
+17          17                   _similar_to                   0.001280                   0.000672                  0.000207
