@@ -29,7 +29,6 @@ data = pd.concat(data, ignore_index=True)
 pd.set_option('display.max_rows', None)
 
 data["Shift"] = data["Shift"].astype(float)
-print(data["MR"])
 
 plt.figure(figsize=(12, 6))
 sns.lineplot(data=data, x="Shift", y="MR", hue="Relation Type", marker="o", ci=None)
@@ -38,5 +37,25 @@ plt.xlabel("Noise Level (Shift)")
 plt.ylabel("Mean Rank (MR)")
 plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True, prune='lower', nbins=6))
 plt.legend(title="Relation Type", bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.tight_layout()
+plt.show()
+
+pivot = data.pivot_table(index="Relation Type", columns="Shift", values="MR", aggfunc="mean")
+plt.figure(figsize=(10, 8))
+sns.heatmap(pivot, annot=True, cmap="YlGnBu", fmt=".2f")
+plt.title("Heatmap of MR Across Noise Levels and Relation Types")
+plt.xlabel("Noise Level (Shift)")
+plt.ylabel("Relation Type")
+plt.show()
+
+noise_level = 0.1
+filtered_data = data[data["Shift"] == noise_level]
+plt.figure(figsize=(12, 6))
+sns.barplot(data=filtered_data, x="Relation Strings", y="MR", hue="Relation Type")
+plt.title(f"MR for Relation Types at Noise Level {noise_level}")
+plt.xlabel("Relation Strings")
+plt.ylabel("MR")
+plt.xticks(rotation=45, ha="right")
+plt.legend(title="Relation Type")
 plt.tight_layout()
 plt.show()
