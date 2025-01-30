@@ -7,10 +7,12 @@
 #SBATCH --time=0-24:00:00
 module load devel/cuda/12.4
 source ~/miniconda3/bin/activate newkge
-export PYTHONPATH=~/miniconda3/envs/newkge/lib/python3.9/site-packages:$PYTHONPATH
+export PYTHONPATH=/home/hk-project-test-p0021631/st_st190139/miniconda3/envs/newkge/lib/python3.9/site-packages:$PYTHONPATH
 
 cd kge/util/distribution-shift/
-chmod +x train.sh
-chmod +x results.sh
-bash train.sh
-bash results.sh
+chmod +x train-complex.sh
+chmod +x train-fb15k-distmult.sh
+chmod +x train-fb15k-complex.sh
+bash train-complex.sh
+bash train-fb15k-distmult.sh
+bash train-fb15k-complex.sh

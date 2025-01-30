@@ -11,18 +11,18 @@ export PYTHONPATH=/home/hk-project-test-p0021631/st_st190139/miniconda3/envs/new
 
 # Define base paths and folders
 BASE_DIR="/hkfs/home/project/hk-project-test-p0021631/st_st190139/kge/local/experiments"
-RESULTS_DIR="/hkfs/home/project/hk-project-test-p0021631/st_st190139/kge/kge/util/distribution-shift/results/rescal"
+RESULTS_DIR="/hkfs/home/project/hk-project-test-p0021631/st_st190139/kge/kge/util/distribution-shift/results/fb15k/complex"
 CHECKPOINT_FOLDERS=(
-    "${BASE_DIR}/wn18-rescal-0.01"
-    "${BASE_DIR}/wn18-rescal-0.05"
-    "${BASE_DIR}/wn18-rescal-0.1"
-    "${BASE_DIR}/wn18-rescal-0.2"
+    "${BASE_DIR}/fb15k-complex-0.01"
+    "${BASE_DIR}/fb15k-complex-0.05"
+    "${BASE_DIR}/fb15k-complex-0.1"
+    "${BASE_DIR}/fb15k-complex-0.2"
 )
 
 # Loop through the checkpoint folders and noise levels
 for CHECKPOINT_FOLDER in "${CHECKPOINT_FOLDERS[@]}"; do
     # Extract noise level from the checkpoint folder name
-    if [[ "${CHECKPOINT_FOLDER}" =~ wn18-rescal-([0-9\.]+) ]]; then
+    if [[ "${CHECKPOINT_FOLDER}" =~ fb15k-complex-([0-9\.]+) ]]; then
         CHECKPOINT_NOISE_LEVEL="${BASH_REMATCH[1]}"
     else
         echo "Skipping non-matching folder: ${CHECKPOINT_FOLDER}"
@@ -42,8 +42,9 @@ for CHECKPOINT_FOLDER in "${CHECKPOINT_FOLDERS[@]}"; do
     # Run the subgroup.py script and log the output
     echo "Running Subgroup Evaluation for ${CHECKPOINT_FOLDER}..." | tee -a "${SUBGROUP_LOG}"
     python /hkfs/home/project/hk-project-test-p0021631/st_st190139/kge/kge/util/distribution-shift/subgroup.py \
-        --checkpoint_path "${CHECKPOINT_FOLDER}/checkpoint_best.pt" \
-        --group_type "relation" | tee -a "${SUBGROUP_LOG}"
+    --checkpoint_path "${CHECKPOINT_FOLDER}/checkpoint_best.pt" \
+    --group_type "relation" \
+    --output_dir "${NOISE_DIR}" | tee -a "${SUBGROUP_LOG}"
 
     # Run the distribution analysis script and log the output
     echo "Running Distribution Analysis for ${CHECKPOINT_FOLDER}..." | tee -a "${DISTRIBUTION_LOG}"
@@ -52,4 +53,3 @@ for CHECKPOINT_FOLDER in "${CHECKPOINT_FOLDERS[@]}"; do
 done
 
 echo "Script execution completed."
-

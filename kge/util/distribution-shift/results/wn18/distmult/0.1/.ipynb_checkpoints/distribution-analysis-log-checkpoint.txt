@@ -1,0 +1,50 @@
+Running Distribution Analysis for /hkfs/home/project/hk-project-test-p0021631/st_st190139/kge/local/experiments/wn18-distmult-0.1...
+Loading configuration of dataset custom-dataset-wn18-distmult-0.1 from /hkfs/home/project/hk-project-test-p0021631/st_st190139/kge/data/custom-dataset-wn18-distmult-0.1 ...
+Loaded 18 keys from map relation_ids
+Setting reciprocal_relations_model.base_model.entity_embedder.dropout to 0., was set to -0.47765377159982886.
+Loaded 60025 train triples
+Loaded 4834 test triples
+Loaded 7419 valid triples
+Loaded 18 keys from map relation_strings
+
+Current Triple Count:
+   Relation ID              Relation Strings Train Triple Count Valid Triple Count Test Triple Count
+0            3  _derivationally_related_form               6791                899              1038
+1            1                     _hypernym               7853                931              1197
+2           10       _synset_domain_topic_of               2887                333               108
+3            8                      _part_of               4451                531               165
+4           11                     _has_part               4389                580               166
+5            7       _member_of_domain_topic               2873                356               118
+6            0                      _hyponym               6542                832              1152
+7           14       _synset_domain_usage_of                592                 62                13
+8           16                   _verb_group               1044                136                33
+9            2               _member_holonym               6815                834               270
+10           6               _member_meronym               6847                827               260
+11          13      _member_of_domain_region                853                103                26
+12           4            _instance_hypernym               2701                326                89
+13           9             _instance_hyponym               2716                325               103
+14           5                     _also_see               1186                153                44
+15          12       _member_of_domain_usage                581                 69                21
+16          15      _synset_domain_region_of                827                117                23
+17          17                   _similar_to                 77                  5                 8
+
+Current Triple Distribution:
+   Relation ID              Relation Strings  Train Triple Distribution  Valid Triple Distribution  Test Triple Distribution
+0            3  _derivationally_related_form                   0.113136                   0.121175                  0.214729
+1            1                     _hypernym                   0.130829                   0.125489                  0.247621
+2           10       _synset_domain_topic_of                   0.048097                   0.044885                  0.022342
+3            8                      _part_of                   0.074152                   0.071573                  0.034133
+4           11                     _has_part                   0.073120                   0.078178                  0.034340
+5            7       _member_of_domain_topic                   0.047863                   0.047985                  0.024410
+6            0                      _hyponym                   0.108988                   0.112144                  0.238312
+7           14       _synset_domain_usage_of                   0.009863                   0.008357                  0.002689
+8           16                   _verb_group                   0.017393                   0.018331                  0.006827
+9            2               _member_holonym                   0.113536                   0.112414                  0.055854
+10           6               _member_meronym                   0.114069                   0.111471                  0.053786
+11          13      _member_of_domain_region                   0.014211                   0.013883                  0.005379
+12           4            _instance_hypernym                   0.044998                   0.043941                  0.018411
+13           9             _instance_hyponym                   0.045248                   0.043806                  0.021307
+14           5                     _also_see                   0.019758                   0.020623                  0.009102
+15          12       _member_of_domain_usage                   0.009679                   0.009300                  0.004344
+16          15      _synset_domain_region_of                   0.013778                   0.015770                  0.004758
+17          17                   _similar_to                   0.001283                   0.000674                  0.001655

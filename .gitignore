@@ -6,7 +6,6 @@ local/*
 !data/*.sh
 !data/preprocess/
 /trace.csv
-*.csv
 *.pyc
 .mypy_cache
 /trace.yaml
