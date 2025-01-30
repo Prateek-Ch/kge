@@ -42,8 +42,9 @@ for CHECKPOINT_FOLDER in "${CHECKPOINT_FOLDERS[@]}"; do
     # Run the subgroup.py script and log the output
     echo "Running Subgroup Evaluation for ${CHECKPOINT_FOLDER}..." | tee -a "${SUBGROUP_LOG}"
     python /hkfs/home/project/hk-project-test-p0021631/st_st190139/kge/kge/util/distribution-shift/subgroup.py \
-        --checkpoint_path "${CHECKPOINT_FOLDER}/checkpoint_best.pt" \
-        --group_type "relation" | tee -a "${SUBGROUP_LOG}"
+    --checkpoint_path "${CHECKPOINT_FOLDER}/checkpoint_best.pt" \
+    --group_type "relation" \
+    --output_dir "${NOISE_DIR}" | tee -a "${SUBGROUP_LOG}"
 
     # Run the distribution analysis script and log the output
     echo "Running Distribution Analysis for ${CHECKPOINT_FOLDER}..." | tee -a "${DISTRIBUTION_LOG}"
@@ -52,4 +53,3 @@ for CHECKPOINT_FOLDER in "${CHECKPOINT_FOLDERS[@]}"; do
 done
 
 echo "Script execution completed."
-
