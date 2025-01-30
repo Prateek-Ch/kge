@@ -1,0 +1,49 @@
+Running Distribution Analysis for /hkfs/home/project/hk-project-test-p0021631/st_st190139/kge/local/experiments/wn18-rescal-0.2...
+Loading configuration of dataset custom-dataset-0.2 from /hkfs/home/project/hk-project-test-p0021631/st_st190139/kge/data/custom-dataset-0.2 ...
+Loaded 18 keys from map relation_ids
+Loaded 62150 train triples
+Loaded 4834 test triples
+Loaded 7682 valid triples
+Loaded 18 keys from map relation_strings
+
+Current Triple Count:
+   Relation ID              Relation Strings Train Triple Count Valid Triple Count Test Triple Count
+0           16                   _verb_group               1041                139                36
+1            3  _derivationally_related_form               7056                874               997
+2            8                      _part_of               4423                559               153
+3            0                      _hyponym               8160                990              1176
+4           11                     _has_part               4474                495               143
+5            1                     _hypernym               8146               1010              1175
+6           13      _member_of_domain_region                842                114                32
+7            4            _instance_hypernym               2703                324               107
+8            9             _instance_hyponym               2724                317               110
+9            6               _member_meronym               6848                826               252
+10          15      _synset_domain_region_of                833                111                26
+11          10       _synset_domain_topic_of               2833                387               124
+12           7       _member_of_domain_topic               2874                355               119
+13           5                     _also_see               1175                164                45
+14           2               _member_holonym               6785                864               291
+15          12       _member_of_domain_usage                577                 73                20
+16          14       _synset_domain_usage_of                584                 70                26
+17          17                   _similar_to                 72                 10                 2
+
+Current Triple Distribution:
+   Relation ID              Relation Strings  Train Triple Distribution  Valid Triple Distribution  Test Triple Distribution
+0           16                   _verb_group                   0.016750                   0.018094                  0.007447
+1            3  _derivationally_related_form                   0.113532                   0.113772                  0.206247
+2            8                      _part_of                   0.071167                   0.072768                  0.031651
+3            0                      _hyponym                   0.131295                   0.128873                  0.243277
+4           11                     _has_part                   0.071987                   0.064436                  0.029582
+5            1                     _hypernym                   0.131070                   0.131476                  0.243070
+6           13      _member_of_domain_region                   0.013548                   0.014840                  0.006620
+7            4            _instance_hypernym                   0.043492                   0.042177                  0.022135
+8            9             _instance_hyponym                   0.043829                   0.041265                  0.022755
+9            6               _member_meronym                   0.110185                   0.107524                  0.052131
+10          15      _synset_domain_region_of                   0.013403                   0.014449                  0.005379
+11          10       _synset_domain_topic_of                   0.045583                   0.050378                  0.025652
+12           7       _member_of_domain_topic                   0.046243                   0.046212                  0.024617
+13           5                     _also_see                   0.018906                   0.021349                  0.009309
+14           2               _member_holonym                   0.109171                   0.112471                  0.060199
+15          12       _member_of_domain_usage                   0.009284                   0.009503                  0.004137
+16          14       _synset_domain_usage_of                   0.009397                   0.009112                  0.005379
+17          17                   _similar_to                   0.001158                   0.001302                  0.000414

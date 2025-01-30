@@ -11,18 +11,18 @@ export PYTHONPATH=/home/hk-project-test-p0021631/st_st190139/miniconda3/envs/new
 
 # Define base paths and folders
 BASE_DIR="/hkfs/home/project/hk-project-test-p0021631/st_st190139/kge/local/experiments"
-RESULTS_DIR="/hkfs/home/project/hk-project-test-p0021631/st_st190139/kge/kge/util/distribution-shift/results/rescal"
+RESULTS_DIR="/hkfs/home/project/hk-project-test-p0021631/st_st190139/kge/kge/util/distribution-shift/results/fb15k/distmult"
 CHECKPOINT_FOLDERS=(
-    "${BASE_DIR}/wn18-rescal-0.01"
-    "${BASE_DIR}/wn18-rescal-0.05"
-    "${BASE_DIR}/wn18-rescal-0.1"
-    "${BASE_DIR}/wn18-rescal-0.2"
+    "${BASE_DIR}/fb15k-distmult-0.01"
+    "${BASE_DIR}/fb15k-distmult-0.05"
+    "${BASE_DIR}/fb15k-distmult-0.1"
+    "${BASE_DIR}/fb15k-distmult-0.2"
 )
 
 # Loop through the checkpoint folders and noise levels
 for CHECKPOINT_FOLDER in "${CHECKPOINT_FOLDERS[@]}"; do
     # Extract noise level from the checkpoint folder name
-    if [[ "${CHECKPOINT_FOLDER}" =~ wn18-rescal-([0-9\.]+) ]]; then
+    if [[ "${CHECKPOINT_FOLDER}" =~ fb15k-distmult-([0-9\.]+) ]]; then
         CHECKPOINT_NOISE_LEVEL="${BASH_REMATCH[1]}"
     else
         echo "Skipping non-matching folder: ${CHECKPOINT_FOLDER}"
